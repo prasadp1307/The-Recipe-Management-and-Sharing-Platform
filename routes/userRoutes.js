@@ -1,9 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
-const userAuthentecation = require('../middleware/authentiction');
+const authentication = require('../middleware/authentiction');
+const upload = require('../controllers/upload');
 
-router.post('/signup',userController.signupUser);
-router.post('/login', userController.loginUser);
+// Define routes
+router.post('/uploadRecipes', authentication, upload.single('image'), userController.uploadRecipes);
+router.get('/profile', authentication, userController.getProfile);
+router.post('/save', authentication, userController.saveRecipe);
+router.get('/:collectionName', authentication, userController.getsavedRcipes);
 
 module.exports = router;
