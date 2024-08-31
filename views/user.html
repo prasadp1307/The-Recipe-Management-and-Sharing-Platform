@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <style>
+        /* Your existing CSS styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .profile-container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .user-details {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #fafafa;
+        }
+
+        .user-details p {
+            margin: 10px 0;
+        }
+
+        .user-details strong {
+            color: #555;
+        }
+
+        .recipes-container, .favorites-container {
+            margin-top: 20px;
+        }
+
+        .collections-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .collection-card {
+            flex: 1 1 calc(25% - 10px);
+            background:#7700b3;
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        header {
+    background-color: #ed7777;
+    padding: 10px 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+header .logo {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+header .logo img {
+    width: 150px;
+}
+
+header h1 {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2.5em;
+    color: #fff;
+    margin: 0;
+}
+
+header nav {
+    flex: 1;
+    text-align: right;
+}
+
+header nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+}
+
+header nav ul li {
+    display: inline;
+}
+
+header nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1em;
+    padding: 5px 10px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+header nav ul li a:hover {
+    background-color: #1a1a2e;
+    border-radius: 5px;
+}
+        .collection-card:hover {
+            background:  #ed7777;
+        }
+
+        @media (max-width: 768px) {
+            .collection-card {
+                flex: 1 1 calc(50% - 10px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .collection-card {
+                flex: 1 1 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="index.html"><img src="makeedible-high-resolution-logo-black-transparent.png" alt="makeEdible! Logo"></a>
+                <h1>Users Profile</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="getstarted.html">Recipes</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="index.html">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="profile-container">
+        <!-- <h1>User Profile</h1> -->
+        <div class="user-details">
+            <p><strong>Username:</strong> <span id="username"></span></p>
+            <p><strong>Email ID:</strong> <span id="emailId"></span></p>
+        </div>
+
+        <h2>Your Recipes</h2>
+        <div id="recipesContainer" class="recipes-container"></div>
+
+        <h2>Collections</h2>
+        <div id="collectionsContainer" class="collections-container">
+            <div class="collection-card" onclick="loadFavorites('beverages')">Beverages</div>
+            <div class="collection-card" onclick="loadFavorites('desserts')">Desserts</div>
+            <div class="collection-card" onclick="loadFavorites('mainCourses')">Main Courses</div>
+            <div class="collection-card" onclick="loadFavorites('snacks')">Snacks</div>
+        </div>
+
+        <h2>Favorites</h2>
+        <div id="favoritesContainer" class="favorites-container"></div>
+    </div>
+
+    <!-- JavaScript files -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="user.js"></script>
+</body>
+</html>

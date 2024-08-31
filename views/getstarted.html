@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src * self blob: data: gap:; style-src * self 'unsafe-inline' blob: data: gap:; script-src * 'self' 'unsafe-eval' 'unsafe-inline' blob: data: gap:; object-src * 'self' blob: data: gap:; img-src * self 'unsafe-inline' blob: data: gap:; connect-src self * 'unsafe-inline' blob: data: gap:; frame-src * self blob: data: gap:;">
+    <title>Home Recipes</title>
+    
+      <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        .nav-bar {
+            display: flex;
+            justify-content: center;
+            background: #ed7777;;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-bar a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-bar a:hover {
+            background-color: ##ed7777;;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input[type="text"], select {
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background: #5cb85c;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background: #4cae4c;
+        }
+
+        #searchBar {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        #recipesContainer {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        #recipesContainer div {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            max-width: 300px;
+            text-align: center;
+        }
+
+        #pagination {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        #pagination button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background: #ed7777;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 5px;
+        }
+
+        #pagination button:hover {
+            background: #0056b3;
+        }
+
+        /* Highlight active button */
+        button.active {
+            font-weight: bold;
+            background-color: #007bff;
+            color: white;
+        }
+    
+    </style>
+</head>
+
+<body>
+    <div class="nav-bar">
+        <a href="./index.html">Home</a>
+        <a href="./login.html">Login</a>
+    </div>
+
+    <div class="container">
+        <h1>Home Recipes</h1>
+
+        <form id="filterForm">
+            <label for="veg">Veg:</label>
+            <select name="veg" id="veg">
+                <option value="">Any</option>
+                <option value="true">Vegetarian</option>
+                <option value="false">Non-Vegetarian</option>
+            </select>
+
+            <label for="cuisine">Cuisine:</label>
+            <input type="text" id="cuisine" name="cuisine">
+
+            <label for="recipesType">Recipe Type:</label>
+            <input type="text" id="recipesType" name="recipesType">
+
+            <button type="submit">Apply Filters</button>
+        </form>
+
+        <input type="text" id="searchBar" placeholder="Search recipes...">
+
+        <div id="recipesContainer"></div>
+        <div id="pagination"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        // Ensure these variables refer to the correct elements
+        const searchBar = document.getElementById('searchBar');
+        const filterForm = document.getElementById('filterForm');
+        const recipesContainer = document.getElementById('recipesContainer');
+        const pagination = document.getElementById('pagination');
+        
+        let currentPage = 1;
+        const token = localStorage.getItem('token'); // Ensure the token is correctly retrieved
+
+        document.addEventListener('DOMContentLoaded', () => {
+            getRecipes(currentPage);
+
+            searchBar.addEventListener('keyup', () => {
+                const searchTerm = searchBar.value.trim().toLowerCase();
+                getRecipes(currentPage, searchTerm);
+            });
+
+            filterForm.addEventListener('submit', event => {
+                event.preventDefault();
+                const formData = new FormData(filterForm);
+                const filters = {
+                    veg: formData.get('veg'),
+                    cuisine: formData.get('cuisine'),
+                    recipesType: formData.get('recipesType')
+                };
+                getRecipes(currentPage, '', filters);
+            });
+        });
+
+        async function getRecipes(page, searchTerm = '', filters = {}) {
+    try {
+        const response = await axios.get('http://localhost:4000/home/recipes', {
+            headers: { "Authorization": `Bearer ${token}` },
+            params: {
+                page,
+                search: searchTerm,
+                ...filters
+            }
+        });
+
+        if (response) {
+            const { recipes, loggedInUser, totalPages, currentPage } = response.data;
+            console.log('API Response:', response.data); // Log the response to check structure
+            displayRecipes(recipes, loggedInUser);
+            showPagination(totalPages, currentPage);
+        }
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+
+// function displayRecipes(recipes, loggedInUser) {
+//     recipesContainer.innerHTML = '';
+//     recipes.forEach(recipe => {
+//         // Check if recipe.User exists and has a name property
+//         const userName = recipe.User ? User.name : 'Unknown';
+
+//         const recipediv = document.createElement('div');
+//         recipediv.className = 'recipes';
+//         recipediv.innerHTML = `
+//             <h2>${recipe.recipesName}</h2>
+//             <img src="${recipe.imgData}" alt="${recipe.recipesName}" style="width: 150px; height:auto">
+//             <p>Uploaded by: ${userName}</p>
+//         `;
+
+//         recipediv.addEventListener('click', () => {
+//             showRecipeDetails(recipe);
+//         });
+
+//         recipesContainer.appendChild(recipediv);
+//     });
+// }
+function displayRecipes(recipes, loggedInUser) {
+    recipesContainer.innerHTML = '';
+    recipes.forEach(recipe => {
+        // Convert binary data to base64
+        const base64Image = recipe.imgData ? `data:image/jpeg;base64,${arrayBufferToBase64(recipe.imgData.data)}` : 'default-image.jpg';
+        
+        // Corrected property access for userName
+        const userName = recipe.User ? recipe.User.name : 'Unknown';
+
+        const recipediv = document.createElement('div');
+        recipediv.className = 'recipes';
+        recipediv.innerHTML = `
+            <h2>${recipe.recipesName}</h2>
+            <img src="${base64Image}" alt="${recipe.recipesName}" style="width: 100px; height:auto">
+            <p>Uploaded by: ${userName}</p>
+        `;
+
+        // Adding click event listener to redirect to recipe details page
+        recipediv.addEventListener('click', () => {
+            window.location.href = `./recipeDetails.html?id=${recipe.id}`;
+        });
+
+        // Append the recipe div to the container
+        recipesContainer.appendChild(recipediv);
+    });
+}
+
+
+function arrayBufferToBase64(buffer) {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+}
+
+//         function showRecipeDetails(recipe) {
+//     const recipeDetails = document.getElementById('recipeDetails');
+//     recipeDetails.innerHTML = `
+//         <h2>${recipe.recipesName || 'No Name'}</h2>
+//         <img src="${recipe.imgData || 'default-image.jpg'}" alt="${recipe.recipesName || 'No Name'}" style="width: 300px; height:auto">
+//         <p><strong>Ingredients:</strong> ${recipe.ingredients || 'Not available'}</p>
+//         <p><strong>Type:</strong> ${recipe.recipesType || 'Not available'}</p>
+//         <p><strong>Uploaded by:</strong> ${recipe.User ? recipe.User.name : 'Unknown'}</p>
+//         <p><strong>Description:</strong> ${recipe.description || 'No description'}</p>
+//     `;
+//     recipeDetails.style.display = 'block';
+// }
+
+function showRecipeDetails(recipe) {
+    const recipeDetails = document.getElementById('recipeDetails');
+    const base64Image = recipe.imgData ? `data:image/jpeg;base64,${arrayBufferToBase64(recipe.imgData.data)}` : 'default-image.jpg';
+
+    recipeDetails.innerHTML = `
+        <h2>${recipe.recipesName || 'No Name'}</h2>
+        <img src="${base64Image}" alt="${recipe.recipesName || 'No Name'}" style="width: 300px; height:auto">
+        <p><strong>Ingredients:</strong> ${recipe.ingredients || 'Not available'}</p>
+        <p><strong>Type:</strong> ${recipe.recipesType || 'Not available'}</p>
+        <p><strong>Uploaded by:</strong> ${recipe.User && recipe.User.name ? recipe.User.name : 'Unknown'}</p>
+        <p><strong>Description:</strong> ${recipe.description || 'No description'}</p>
+    `;
+    recipeDetails.style.display = 'block';
+}
+
+
+        function showPagination(totalPages, currentPage) {
+            pagination.innerHTML = '';
+            for (let i = 1; i <= totalPages; i++) {
+                const button = document.createElement('button');
+                button.innerHTML = i;
+                button.className = currentPage === i ? 'active' : '';
+                button.addEventListener('click', () => {
+                    getRecipes(i);
+                });
+                pagination.appendChild(button);
+            }
+        }
+    </script>
+</body>
+
+</html>

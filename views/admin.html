@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="index.html"><img src="makeedible-high-resolution-logo-black-transparent.png" alt="makeEdible! Logo"></a>
+                <h1>Admin Dashboard</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="getstarted.html">Recipes</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="index.html">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+
+    <!-- Main Content Container -->
+    <div class="container">
+        <!-- User Management Section -->
+        <div class="section">
+            <h2>User Management</h2>
+            <button onclick="fetchUsers()">Load Users</button>
+            <table id="usersTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- Recipe Management Section -->
+        <div class="section">
+            <h2>Recipe Management</h2>
+            <button onclick="fetchRecipes()">Load Recipes</button>
+            <table id="recipesTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script>
+        const token = localStorage.getItem('token');
+
+document.addEventListener('DOMContentLoaded', () => {
+    fetchUsers();
+    fetchRecipes();
+});
+async function fetchUsers() {
+    try {
+        const response = await axios.get('http://localhost:4000/admin/getUsers', {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        console.log(response);
+        const usersTableBody = document.querySelector('#usersTable tbody');
+        usersTableBody.innerHTML = '';
+
+        response.data.forEach(user => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${user.id}</td>
+                <td>${user.name}</td>
+                <td>${user.email}</td>
+                <td>
+                    ${!user.isAdmin ?
+                    `<button class="btn-danger" onclick="deleteUser(${user.id})">Delete</button>` :
+                    'Cannot delete admin'
+                }
+                </td>
+            `;
+            usersTableBody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error loading users:', error);
+    }
+}
+
+
+async function fetchRecipes() {
+    try {
+        const response = await axios.get('http://localhost:4000/admin/getRecipes', {
+            headers: { "Authorization": `Bearer ${token}` }  
+        });
+        const recipesTableBody = document.querySelector('#recipesTable tbody');
+        recipesTableBody.innerHTML = '';
+        console.log(response);
+
+        response.data.forEach(recipe => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${recipe.id}</td>
+                <td>${recipe.recipesName}</td>
+                <td>${recipe.recipesType}</td>
+                <td>
+                    <button class="btn-danger" onclick="removeRecipe(${recipe.id})">Remove</button>
+                </td>
+            `;
+            recipesTableBody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error loading recipes:', error);
+    }
+}
+
+// async function fetchUsers() {
+//     try {
+//         const response = await axios.get('http://localhost:4000/admin/getUsers', {
+//             headers: { "Authorization": `${token}` }
+//         });
+//         console.log(response);
+//         const usersTableBody = document.querySelector('#usersTable tbody');
+//         usersTableBody.innerHTML = '';
+
+//         response.data.forEach(user => {
+//             const row = document.createElement('tr');
+//             row.innerHTML = `
+//                 <td>${user.id}</td>
+//                 <td>${user.name}</td>
+//                 <td>${user.emailId}</td>
+//                 <td>
+//                     ${!user.isAdmin ?
+//                     `<button class="btn-danger" onclick="deleteUser(${user.id})">Delete</button>` :
+//                     'Cannot delete admin'
+//                 }
+//                 </td>
+//             `;
+//             usersTableBody.appendChild(row);
+//         });
+//     } catch (error) {
+//         console.error('Error loading users:', error);
+//     }
+// }
+
+// async function fetchRecipes() {
+//     try {
+//         const response = await axios.get('http://localhost:4000/admin/getRecipes', {
+//             headers: { "Authorization": `${token}` }
+//         });
+//         const recipesTableBody = document.querySelector('#recipesTable tbody');
+//         recipesTableBody.innerHTML = '';
+//         console.log(response);
+
+//         response.data.forEach(recipe => {
+//             const row = document.createElement('tr');
+//             row.innerHTML = `
+//                 <td>${recipe.id}</td>
+//                 <td><img src="${recipe.imgUrl}" alt="${recipe.recipesName}" style="width: 150px; height:auto"></td>
+//                 <td>${recipe.recipesName}</td>
+//                 <td>
+//                     <button class="btn-danger" onclick="removeRecipe(${recipe.id})">Remove</button>
+//                 </td>
+//             `;
+//             recipesTableBody.appendChild(row);
+//         });
+//     } catch (error) {
+//         console.error('Error loading recipes:', error);
+//     }
+// }
+async function deleteUser(userId) {
+    try {
+        await axios.delete(`http://localhost:4000/admin/users/${userId}`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        alert("User Deleted Successfully"); 
+        fetchUsers(); // Refresh the user list 
+    } catch (error) {
+        console.error('Error deleting user:', error);
+    }
+}
+
+async function removeRecipe(recipeId) {
+    try {
+        await axios.delete(`http://localhost:4000/admin/recipes/${recipeId}`, {
+            headers: { "Authorization": `Bearer ${token}` } 
+        });
+        alert("Recipe Deleted Successfully");
+        fetchRecipes(); // Refresh the recipe list
+    } catch (error) {
+        console.error('Error removing recipe:', error);
+    }
+}
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</body>
+
+</html>

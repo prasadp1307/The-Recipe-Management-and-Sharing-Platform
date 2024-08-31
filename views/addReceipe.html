@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Management</title>
+    <link rel="stylesheet" href="addReceipe.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="index.html"><img src="makeedible-high-resolution-logo-black-transparent.png" alt="makeEdible! Logo"></a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="getstarted.html">Recipes</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="./user.html">Profile</a></li>
+                    <li><a href="index.html">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        <h1>Recipe Management</h1>
+        <div class="form-container">
+            <h2>Add New Recipe</h2>
+            <form id="recipe-form"  onsubmit="uploadRecipes(event)">
+                <input type="text" id="recipesName" placeholder="Recipe Name" required>
+                <input type="text" id="cuisine" placeholder="Cuisine" required>
+                
+                <div>
+                    <label for="veg">Vegetarian:</label>
+                    <input type="checkbox" id="veg">
+                </div>
+                
+                <input type="text" id="recipesType" placeholder="Recipe Type (e.g., Dessert, Main Course)" required>
+                <input type="text" id="cookingTime" placeholder="Cooking Time" required>
+                
+                <textarea id="ingredients" placeholder="Ingredients" required></textarea>
+                <textarea id="method" placeholder="Method" required></textarea>
+                
+                <input type="file" id="image" accept="image/*"  name="img">
+             
+
+                
+                <button type="submit">Add Recipe</button>
+            </form>
+        </div>
+        <div class="recipes-container">
+            <h2>All Recipes</h2>
+            <div id="recipes"></div>
+        </div>
+    </div>
+    <script src="/recipeForm.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+     
+</body>
+</html>
+
+
+<!-- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Recipe</title>
+    <link rel="stylesheet" href="./addReceipe.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Add Recipe</h1>
+        <form id="recipeForm">
+            <label for="cuisine">Cuisine:</label>
+            <input type="text" id="cuisine" name="cuisine" required>
+
+            <label for="veg">Vegetarian:</label>
+            <select id="veg" name="veg" required>
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+            </select>
+
+            <label for="recipesType">Recipe Type:</label>
+            <input type="text" id="recipesType" name="recipesType" required>
+
+            <label for="recipesName">Recipe Name:</label>
+            <input type="text" id="recipesName" name="recipesName" required>
+
+            <label for="imgData">Image:</label>
+            <input type="file" id="imgData" name="imgData" accept="image/*" required>
+
+            <label for="ingredients">Ingredients:</label>
+            <textarea id="ingredients" name="ingredients" rows="4" required></textarea>
+
+            <label for="method">Method:</label>
+            <textarea id="method" name="method" rows="4" required></textarea>
+
+            <label for="cookingTime">Cooking Time:</label>
+            <input type="text" id="cookingTime" name="cookingTime" required>
+
+            <button type="submit">Add Recipe</button>
+        </form>
+    </div>
+
+    <script src="../public/recipeForm.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</body>
+</html> -->
