@@ -44,7 +44,7 @@ function arrayBufferToBase64(buffer) {
 
 async function editRecipe(recipeId) {
     localStorage.setItem('recipeIdToEdit', recipeId);
-    window.location.href = './recipesForm.html';
+    window.location.href = './addReceipe.html';
 
 }
 

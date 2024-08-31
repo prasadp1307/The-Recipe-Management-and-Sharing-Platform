@@ -3,6 +3,26 @@ const urlParams = new URLSearchParams(window.location.search);
 const recipeId = urlParams.get('id');
 const token = localStorage.getItem('token');
 
+document.addEventListener('DOMContentLoaded', () => {
+    // Assuming you have some code that dynamically creates user elements
+    users.forEach(user => {
+        const followButton = document.createElement('button');
+        followButton.id = `followButton-${user.UserId}`;
+        followButton.textContent = 'Follow';
+        followButton.onclick = () => followUser(user.UserId);
+
+        const unfollowButton = document.createElement('button');
+        unfollowButton.id = `unfollowButton-${user.UserId}`;
+        unfollowButton.textContent = 'Unfollow';
+        unfollowButton.style.display = 'none';
+        unfollowButton.onclick = () => unfollowUser(user.UserId);
+
+        // Append the buttons to your desired container
+        document.body.appendChild(followButton);
+        document.body.appendChild(unfollowButton);
+    });
+});
+
 
 document.addEventListener('DOMContentLoaded', async () => {
     await getRecipeDetail(recipeId);
@@ -52,14 +72,14 @@ function displayRecipeDetail(recipe, isFollowing, loggedInUserId) {
             </select>
             <button id="submitRating">Submit Rating</button>
         </div>
-        <button id="followButton-${recipe.UserId}" style="display:none;">Follow</button>
-        <button id="unfollowButton-${recipe.UserId}" style="display:none;">Unfollow</button>
+        <button id="followButton-${recipe.userId}" style="display:none;">Follow</button>
+        <button id="unfollowButton-${recipe.userId}" style="display:none;">Unfollow</button>
     `;
 
-    const followButton = document.querySelector(`#followButton-${recipe.UserId}`);
-    const unfollowButton = document.querySelector(`#unfollowButton-${recipe.UserId}`);
+    const followButton = document.querySelector(`#followButton-${recipe.userId}`);
+    const unfollowButton = document.querySelector(`#unfollowButton-${recipe.userId}`);
 
-    if (recipe.UserId != loggedInUserId) {
+    if (recipe.userId != loggedInUserId) {
         if (isFollowing) {
             unfollowButton.style.display = 'block';
         } else {
@@ -114,22 +134,31 @@ async function rateRecipe(recipeId, userId, rating) {
         console.error('Error submitting rating:', err);
     }
 }
+const followedId = 'someUserId'; // Replace 'someUserId' with the actual ID you want to follow
+axios.post(`http://localhost:4000/home/follow/${followedId}`)
+    .then(response => {
+        console.log('User followed successfully:', response.data);
+    })
+    .catch(error => {
+        console.error('Error following user:', error);
+    });
 
 
 async function followUser(userId) {
     try {
-        console.log(userId);
+        console.log('Attempting to follow user with ID:', userId); // Add this for debugging
+        const token = localStorage.getItem('token'); // Ensure the token is correctly set
         const response = await axios.post(`http://localhost:4000/home/follow/${userId}`, {}, {
             headers: { "Authorization": `Bearer ${token}` }
         });
         console.log(response.data.message);
-
         document.querySelector(`#followButton-${userId}`).style.display = 'none';
         document.querySelector(`#unfollowButton-${userId}`).style.display = 'block';
     } catch (err) {
-        console.log(err);
+        console.error('Error following user:', err);
     }
 }
+
 
 async function unfollowUser(userId) {
     try {

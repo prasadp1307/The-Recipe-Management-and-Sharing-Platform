@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy"
         content="default-src * self blob: data: gap:; style-src * self 'unsafe-inline' blob: data: gap:; script-src * 'self' 'unsafe-eval' 'unsafe-inline' blob: data: gap:; object-src * 'self' blob: data: gap:; img-src * self 'unsafe-inline' blob: data: gap:; connect-src self * 'unsafe-inline' blob: data: gap:; frame-src * self blob: data: gap:;">
-    <title>Recipe Details</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <title>Recipe Details</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -103,14 +104,16 @@
 <body>
     <div class="nav-bar">
         <a href="./index.html">Home</a>
-        <a href="./recipesForm.html">Upload Recipes</a>
+        <a href="./addReceipe.html">Upload Recipes</a>
         <a href="./user.html">Profile</a>
     </div>
 
     <div class="container">
         <h1>Recipe Details</h1>
-
+       
         <div id="recipeDetailContainer"></div>
+        <!-- <button id="followButton-{{userId}}" onclick="followUser('{{userId}}')">Follow</button> -->
+<!-- <button id="unfollowButton-{{userId}}" onclick="unfollowUser('{{userId}}')" style="display: none;">Unfollow</button> -->
 
         <button id="saveToFavorites">Save to Favorites</button>
         <select id="collectionSelect">
